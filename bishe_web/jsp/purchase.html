@@ -1,0 +1,85 @@
+<html>
+<head>
+    <title>登录页面</title>
+    <meta http-equiv="CONTENT-TYPE" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" language="JavaScript" src="../jquery.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../myjslib/inputlib.js"></script>
+    <script type="text/javascript" language="JavaScript">
+        var thisURL = document.URL;
+        var getVal = thisURL.split('?')[1];
+        var params = getVal.split("&");
+        var _fundId = params[0].split("=")[1];
+        var fundCp = params[1].split("=")[1];
+        $(document).ready(
+                function buttonClick() {
+                    $("#fundCp").attr("value", fundCp);
+
+
+                    $("#fundPurchase").click(function () {
+
+                        var val = checkInput("#fundCp");
+                        if(val == -1) return;
+                        var val = checkInput("#backNo");
+                        if(val == -1) return;
+                        var val = checkInput("#money");
+                        if(val == -1) return;
+                        var val = checkInput("#bank");
+                        if(val == -1) return;
+
+                        var aj = $.ajax({
+                            type: "post",
+                            url: "http://127.0.0.1:8080/fund/purchase",
+                            data: {fundId:_fundId,money:$("#money").val(),bankType:$("#bank").val(),backNo:$("#backNo").val()},
+                            success: function (data) {
+                                if (data.id == 0) {
+                                    alert("购买成功!");
+                                } else {
+                                    alert("登录信息不正确!");
+                                }
+                            },
+                            error: function (data) {
+                                alert("服务器累了！");
+                            }
+                        });
+                    });
+                }
+        );
+    </script>
+
+</head>
+<body>
+
+<div style=" margin-left: 45%;margin-top:3%;"><img src="../images/head.jpg"/></div>
+
+<table align="center" border="0">
+    <tr>
+        <td>基金公司</td>
+        <td><input type="text" id="fundCp" readonly="true"/></td>
+    </tr>
+    <tr>
+        <td>资金数目</td>
+        <td><input type="text" id="money"/></td>
+    </tr>
+    <tr>
+        <td>银行种类</td>
+        <td><input type="text" id="bank"/></td>
+    </tr>
+    <tr>
+        <td>银行卡号</td>
+        <td><input type="text" id="backNo"/></td>
+    </tr>
+    <tr>
+        <td>
+            <button type="button" id="fundPurchase">购买</button>
+        </td>
+    </tr>
+   <!-- <tr>
+        <td><a href="./findPwd.jsp">忘记密码</a></td>
+        <td><a href="./register.html">免费注册</a></td>
+    </tr>-->
+
+</table>
+
+</body>
+
+

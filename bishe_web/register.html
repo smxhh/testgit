@@ -1,0 +1,112 @@
+<html>
+<head>
+  <title>注册页面</title>
+  <meta http-equiv="CONTENT-TYPE" content="text/html;charset=utf-8" />
+  <script type="text/javascript" language="JavaScript" src="jquery.js"> </script>
+  <script type="text/javascript" language="JavaScript">
+
+    $(document).ready(
+            function buttonClick() {
+              $("#fundRegister").click(function () {
+                if ($("#name").val().length == 0 || $.trim($("#name").val()) == "") {
+                  alert("登录名为空。。");
+                  return ;
+                }
+
+                /**
+                 * 判断此用户名是否已经用过，前端做拦截
+                 */
+
+//                else{
+//
+//                  if($("#name").val() == ){
+//                    alert("该用户名已经注册");
+//                    return;
+//                  }
+//                }
+                if ($("#pwd").val().length == 0 || $.trim($("#pwd").val()) == "") {
+                  alert("密码为空。。");
+                  return ;
+                }
+                if($("#confirmPwd").val()==" "){
+                  alert("确认密码为空。。");
+                  return;
+                }
+                if($("#confirmPwd").val()!=" " &&$("#confirmPwd").val() !=" " && $("#confirmPwd").val() != $("#pwd").val()){
+                  alert("两次的密码输入不一致。。");
+                  return;
+                }
+                if($("#mail").val()==" "){
+                  alert("注册邮箱为空。。");
+                  return;
+                }
+
+                /**
+                 * 判断此邮箱是否已经注册过过，前端做拦截
+                 */
+
+//                else{
+//
+//                  if($("#mail").val() == ){
+//                    alert("该邮箱已经注册");
+//                    return;
+//                  }
+//                }
+                var aj = $.ajax({
+                  type: "post",
+                  url: "/userRegister",
+                  data: {name: $("#name").val(), pwd: $("#pwd").val(), comfirmPwd:$("#comfirm").val(), mail:$("#mail").val()},
+                  success: function (data) {
+                    if ("success" == data) {
+                      window.location.href = "/login";
+                    } else {
+                      alert("注册信息不正确!");
+                    }
+                  },
+                  error: function (data) {
+                    alert("注册失败！");
+                  }
+                });
+              });
+            });
+
+  </script>
+  <script type="text/javascript">
+
+    function changeimage()
+    {
+      var img = document.getElementById("image") ;
+      if(img)
+        img.src=img.src+ "?" + new Date().getTime();
+    }
+
+    function checkVlidte(object)
+    {
+
+    if(object.value.length != 4 )
+    {
+    alert("验证码错误！");
+
+    //object.focus() ;//重新定位到该输入框
+    //object.select() ;//把已有的内容选中
+    }
+    }
+  </script>
+</head>
+<body>
+
+name: <input type="text" name="name" id="name"/><br/>
+pwd:  <input type="password" name="pwd" id="pwd"/><br/>
+confirmPwd:  <input type="password" name="confirmPwd" id="confirmPwd"/><br/>
+mail：<input type="text" name="mail" id="mail" /><br/>
+codes：<input type="text" name="codes" id="codes" onblur="checkVlidte(this)"/><br/>
+<img id="image" src="images/1.jpg"/>&nbsp;
+<a href="javascript:changeimage()" >看不清?换一张</a>
+<button type="button" id="fundRegister" >注册</button>
+<input type="reset" value="重置" />
+
+
+</body>
+</html>
+
+

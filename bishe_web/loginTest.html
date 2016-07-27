@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <base href="<%=basePath%>">
+
+  <title>My JSP 'ValidateLogin.jsp' starting page</title>
+
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+  <meta http-equiv="description" content="This is my page">
+
+
+</head>
+
+<body style="background-color:#66ccff" >
+<table cellspacing="10"
+       border=1 background="" align="center">
+  <tr>
+    <td>
+
+      <b style="font-size:20px;color:green;" >会员--登录</b>
+      <hr width=220 align=left>
+
+      <form name=form1 Action="LoginServlet" method="get" >
+        <br />
+        用户名：
+        <input type="text" name="usename" value=543806053@qq.com size=19 maxlength=16 />
+        <br />
+        <br />
+        密 &nbsp;码：
+        <input type="password" name="password" maxlength=16 />
+        <br /><br />
+        认证码： <input type="text" name="validateValue" size=19 onblur="checkVlidte(this)"/><br>
+
+        <img id="image" src="servlet/Response_3"/>&nbsp;
+        <a href="javascript:changeimage()" >看不清?换一张</a>
+        <br /><br />
+
+
+        <br /><br />
+        &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" value="登录"/>
+        &nbsp; <input type="reset" value="重置" />
+        <hr width=220 align=left>
+      </form>
+    </td>
+  </tr>
+
+</table>
+
+
+</body>
+
+<script type="text/javascript">
+  function validate_required(field,alerttxt)
+  {
+    with(field)
+    {
+
+      /*if(value==null||value=="")
+       {
+       alert(alerttxt);
+       return false ;
+       }
+       else
+       return true ;
+       */
+
+      i = value.indexOf("@"); //邮箱认证
+      j = value.lastIndexOf(".");
+      if(i < 1 || j-i <2)
+      {
+        alert(alerttxt);
+        return false ;
+      }
+      else
+        return true ;
+    }
+  }
+
+  function password_validate (_pass,alerttxt)
+  {
+    with(_pass)
+    {
+      if(value!="")
+        return true ;
+      else
+      {
+        alert(alerttxt) ;
+        return false ;
+      }
+    }
+  }
+
+
+  function validate_form(thisform)
+  {
+    with(thisform)
+    {
+      if(validate_required(name1,"请输入有效的邮箱账号！") == false)
+      {
+        name1.focus();
+        return false ;
+      }
+
+      if(password_validate(pass,"请输入正确的密码！") == false)
+      {
+        pass.focus();
+        return false ;
+      }
+
+    }
+  }
+
+</script>
+
+<script type="text/javascript">
+
+  function proving()
+  {
+    if(form1.pass.value!="")
+      window.open("http://www.baidu.com/","_self");
+    else
+      window.open("http://www.google.com/","_self");
+
+
+  }
+
+</script>
+
+
+<script type="text/javascript">
+  function changeimage()
+  {
+    var img = document.getElementById("image") ;
+    if(img)
+      img.src=img.src+ "?" + new Date().getTime();
+  }
+
+  function checkVlidte(object)
+  {
+
+    if(object.value.length != 4 )
+    {
+      alert("验证码错误！");
+
+      //object.focus() ;//重新定位到该输入框
+      //object.select() ;//把已有的内容选中
+    }
+  }
+
+</script>
+
+</html>

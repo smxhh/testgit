@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqs.bishe.dao.mysqldb.FundMapper">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="fund.id">
+        INSERT INTO fund_cp_info(fund_cp,rate,Info,status)
+        VALUES (#{fund.fundCp},#{fund.rate},#{fund.info},#{fund.status});
+    </insert>
+
+
+    <insert id="purchase" useGeneratedKeys="true" keyProperty="order.id">
+        INSERT INTO trade_order(fund_cp_id,yinhang_type,yinhang_no,money,mobile)
+        VALUES (#{order.fundId},#{order.bankType},#{order.bankNo},#{order.money},#{order.mobile});
+    </insert>
+
+    <resultMap id="resultFund" type="com.cqs.bishe.bean.Fund">
+        <id property="id" column="Id"/>
+        <result property="fundCp" column="fund_cp"/>
+        <result property="rate" column="rate" />
+        <result property="info" column="Info" />
+        <result property="createTime" column="cteatetime" javaType="java.util.Date" jdbcType="TIMESTAMP"></result>
+        <result property="updateTime" column="uptime" javaType="java.util.Date" jdbcType="TIMESTAMP"></result>
+        <result property="status" column="status" />
+    </resultMap>
+
+    <sql id="fundColumns"> Id,fund_cp,rate,Info,status,cteatetime,uptime </sql>
+
+
+    <select id="select" parameterType="com.cqs.bishe.bean.FundSelectCondition" resultMap="resultFund">
+        SELECT<include refid="fundColumns" />
+        from fund_cp_info
+        where
+        <if test="condition.company != null and condition.company !='' ">
+            fund_cp=#{condition.company} and
+        </if>
+        <if test="condition.minRate !=null and condition.minRate !='' ">
+            rate>#{condition.minRate} and
+        </if>
+        <if test="condition.maxRate !=null and condition.maxRate !='' ">
+            #{condition.maxRate}>rate and
+        </if>
+        1=1
+        order by rate DESC
+    </select>
+
+
+    <select id="count" parameterType="com.cqs.bishe.bean.FundSelectCondition" resultType="int">
+        SELECT count(1)
+        from fund_cp_info
+        where
+        <if test="condition.company != null and condition.company !='' ">
+            fund_cp=#{condition.company} and
+        </if>
+        <if test="condition.minRate !=null and condition.minRate !='' ">
+            rate>#{condition.minRate} and
+        </if>
+        <if test="condition.maxRate !=null and condition.maxRate !='' ">
+            #{condition.maxRate}>rate and
+        </if>
+        1=1
+    </select>
+
+
+    <update id="start">
+        update fund_cp_info
+        set status=1
+        where fund_cp=#{company}
+    </update>
+
+    <update id="stop">
+        update fund_cp_info
+        set status=0
+        where fund_cp=#{company}
+    </update>
+
+</mapper>

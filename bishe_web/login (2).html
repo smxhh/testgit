@@ -1,0 +1,49 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>登录页面</title>
+  <meta http-equiv="CONTENT-TYPE" content="text/html;charset=utf-8" />
+  <script type="text/javascript" language="JavaScript" src="jquery.js"> </script>
+  <script type="text/javascript" language="JavaScript">
+
+    $(document).ready(
+    function buttonClick() {
+      $("#fundLogin").click(function () {
+        if ($("#name").val().length == 0 || $.trim($("#name").val()) == "") {
+          alert("登录名为空。。");
+          return ;
+        }
+        if ($("#pwd").val().length == 0 || $.trim($("#pwd").val()) == "") {
+          alert("密码为空。。");
+          return ;
+        }
+
+        var aj = $.ajax({
+          type: "post",
+          url: "/userLogin",
+          data: {name: $("#name").val(), pwd: $("#pwd").val()},
+          success: function (data) {
+            if ("success" == data) {
+              window.location.href = "/index";
+            } else {
+              alert("登录信息不正确!");
+            }
+          },
+          error: function (data) {
+            alert("登录失败！")
+          }
+        });
+      });
+    });
+
+  </script>
+</head>
+<body>
+
+  name: <input type="text" name="name" id="name"/><br/>
+  pwd:  <input type="password" name="pwd" id="pwd"/><br/>
+  <button type="button" id="fundLogin" >登录</button>
+
+</body>
+</html>
+

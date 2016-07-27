@@ -1,0 +1,62 @@
+<html>
+<head>
+    <title>登录页面</title>
+    <meta http-equiv="CONTENT-TYPE" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" language="JavaScript" src="../jquery.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../myjslib/inputlib.js"></script>
+    <script type="text/javascript" language="JavaScript">
+        $(document).ready(
+                function buttonClick() {
+                    $("#fundlogin").click(function () {
+                        checkInput("#name");
+                        checkInput("#pwd");
+
+                        var aj = $.ajax({
+                            type: "post",
+                            url: "http://127.0.0.1:8080/user/login",
+                            data: {mobile: $("#name").val(), pwd: $("#pwd").val()},
+                            success: function (data) {
+                                if (data.id == 0) {
+                                    window.location.href = "./index.html";
+                                } else {
+                                    alert("登录信息不正确!");
+                                }
+                            },
+                            error: function (data) {
+                                alert("登录失败！")
+                            }
+                        });
+                    });
+                }
+        );
+    </script>
+
+</head>
+<body>
+<div style=" margin-left: 45%;margin-top: 3%;"><img src="../images/head.jpg"/></div>
+<div align="center">
+    <table border="0" align="center">
+        <tr>
+            <td>手机号:</td>
+            <td><input type="text" name="name" id="name"/></td>
+        </tr>
+        <tr>
+            <td>密码:</td>
+            <td><input type="password" name="pwd" id="pwd"/></td>
+        </tr>
+        <tr>
+            <td>
+                <button type="button" id="fundlogin">登录</button>
+            </td>
+
+        </tr>
+        <tr>
+            <td><a href="findPwd.jsp">忘记密码</a></td>
+            <td><a href="register.html">免费注册</a></td>
+        </tr>
+    </table>
+</div>
+
+</body>
+
+

@@ -1,0 +1,155 @@
+<html>
+<head>
+    <title>登录页面</title>
+    <meta http-equiv="CONTENT-TYPE" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" language="JavaScript" src="../jquery.js"></script>
+    <script type="text/javascript" language="JavaScript">
+        var num = 1;
+        const limit = 20;
+        rowArr = new Array;
+        arrFlag = false;
+        var sumFund;
+
+
+        function getPreData() {
+            if (num > 1) {
+                num--;
+                getData(num, limit);
+            }
+
+        }
+        function getNextData() {
+            if ((sumFund / limit) > num) {
+                num++;
+                getData(num, limit);
+            }
+        }
+
+        function purChaseFund(elem_button){
+            var fundId =elem_button.attributes.getNamedItem("fund_id").value;
+            var fundCp =elem_button.attributes.getNamedItem("fund_cp").value;
+            document.location.href="./purchase.html?fundId="+fundId+"&fundCp="+fundCp;
+        }
+
+
+        function getData(num, limit) {
+            var getFund = $.ajax({
+                type: "post",
+                url: "http://127.0.0.1:8080/fund/getFunds",
+                data: {index: num, size: limit},
+                success: function (data) {
+                    if (data.id == 0) {
+                        fundData = data.lists;
+                        if (fundData.length > 0) {
+
+                            if (arrFlag == false) {
+                                $.each(fundData, function (index, json) {
+                                    var row = $("#template").clone();//克隆一份模板
+                                    row.css("display","table-row");
+                                    row.find("#divPName").html(json.fundCp);//替换标记内容
+                                    row.find("#divCName").html(json.rate);
+                                    row.find("#divID").html(json.info);
+                                    row.find("#purchase").find("#p_button").attr("fund_id",json.id);
+                                    row.find("#purchase").find("#p_button").attr("fund_cp",json.fundCp);
+                                    row.find("#purchase").find("#p_button").attr("onclick","purChaseFund(this)");
+                                    row.attr("id", json.id);//改变行的Id
+                                    row.appendTo("#tableTemp");//添加到模板的容器中
+                                    rowArr.push(row);
+                                    if (index == limit - 1) {
+                                        arrFlag = true;
+                                    }
+                                });
+                            } else {
+                                for (var i = 0; i < fundData.length; i++) {
+                                    var row = rowArr[i];
+                                    row.css("display", "table-row");
+                                    var unit = fundData[i];
+                                    row.find("#divPName").html(unit.fundCp);//替换标记内容
+                                    row.find("#divCName").html(unit.rate);
+                                    row.find("#divID").html(unit.info);
+                                    row.attr("id", unit.id);//改变行的Id
+                                    row.appendTo("#tableTemp");//添加到模板的容器中
+                                }
+                                for (var i = fundData.length; i < limit; i++) {
+                                    row = rowArr[i];
+                                    row.css("display", "none");
+                                }
+                            }
+                            $("#template").css("display", "none");//隐藏行模块
+                            $("#trLoad").css("display", "none");//隐藏提示行模块
+                        }
+                        else {
+                            $("#spnLoad").html("<font color=green>没有查询到数据！</font>");
+                        }
+                    } else {
+                        alert("登录信息不正确!");
+                    }
+                },
+                error: function (data) {
+                    alert("登录失败！")
+                }
+            });
+        }
+
+
+        $(document).ready(
+                function buttonClick() {
+                    $("#spnLoad").html("<font color=green>数据加载中……</font>");
+                    getData(num, limit);
+                    var aj = $.ajax({
+                        type: "post",
+                        url: "http://127.0.0.1:8080/fund/getFundCount",
+                        data: {},
+                        success: function (data) {
+                            if (data.id == 0) {
+                                sumFund = data.count;
+                            } else {
+                                alert("服务器累了!");
+                            }
+                        },
+                        error: function (data) {
+                            alert("请求失败！");
+                        }
+                    });
+
+                    $("#prePage").click(function () {
+                        getPreData();
+                    });
+
+                    $("#nextPage").click(function () {
+                        getNextData();
+                    });
+                }
+        );
+
+
+    </script>
+</head>
+<body>
+<div style=" margin-left:45%;margin-top: 3%;"><img src="../images/head.jpg"/></div>
+<div align="center">
+
+    <table cellpadding="1" cellspacing="1" border="0px" style="background-color:#000" width="600px" id="tableTemp">
+        <tr>
+            <td style=" background-color:#fff">基金公司</td>
+            <td style=" background-color:#fff">汇率</td>
+            <td style=" background-color:#fff">简介</td>
+            <td style=" background-color:#fff">购买入口</td>
+        </tr>
+        <tr id="trLoad" style=" background-color:#fff">
+            <td colspan="3"><span id="spnLoad"></span></td>
+        </tr>
+        <tr id="template" style="display:table-row;">
+            <td style=" background-color:#fff" id="divPName"></td>
+            <td style=" background-color:#fff" id="divCName"></td>
+            <td style=" background-color:#fff" id="divID"></td>
+            <td style=" background-color:#fff" id="purchase"><input type="button" id="p_button" value="购买"></td>
+        </tr>
+    </table>
+
+    <input type="button" value="上一页" id="prePage">
+    <input type="button" value="下一页" id="nextPage">
+</div>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<html>
+<head>
+    <title>注册页面</title>
+    <meta http-equiv="CONTENT-TYPE" content="text/html;charset=utf-8"/>
+    <script type="text/javascript" language="JavaScript" src="../jquery.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../myjslib/inputlib.js"></script>
+    <script type="text/javascript" language="JavaScript" src="../myjslib/timelib.js"></script>
+    <script type="text/javascript" language="JavaScript">
+
+        $(document).ready(
+                function buttonClick() {
+                    const localWait = 60;
+                    var wait = localWait;
+                    $("#register").click(function () {
+                        var val = checkInput("#name");
+                        if (val == -1) return;
+                        val = checkInput("#pwd");
+                        if (val == -1) return;
+                        val = checkInput("#codes");
+                        if (val == -1) return;
+                        val = checkInput("#cerdNo");
+                        if (val == -1) return;
+                        val = checkInput("#mobile");
+                        if (val == -1) return;
+
+                        type = $("#type").val();
+
+
+                        var aj = $.ajax({
+                            type: "post",
+                            url: "http://127.0.0.1:8080/user/register",
+                            data: {
+                                name: $("#name").val(),
+                                pwd: $("#pwd").val(),
+                                mobile: $("#mobile").val(),
+                                cert_no: $("#cerdNo").val(),
+                                type: $("#type").val(),
+                                vCode: $("#codes").val()
+                            },
+                            success: function (data) {
+                                if (data.id == 13 || data.id == 14) {
+                                    window.location.href = "./login.html";
+                                } else if (data.id == 3) {
+                                    alert("输入验证码有问题");
+                                } else {
+                                    alert("请不要漏填信息");
+                                }
+                            },
+                            error: function (data) {
+                                alert("系统太累了，请稍后重试！")
+                            }
+                        });
+                    });
+
+                    $("#getcodes").click(function () {
+                        checkInput("#mobile");
+                        vCodeTime(this, wait);
+                        var aj = $.ajax({
+                            type: "post",
+                            url: "http://127.0.0.1:8080/user/getCode",
+                            data: {mobile: $("#mobile").val()},
+                            success: function (data) {
+                                if (data.id == 0) {
+                                } else {
+                                    alert("手机号输入不正确!");
+                                }
+                            },
+                            error: function (data) {
+                                alert("系统太累了，请稍后重试！")
+                            }
+                        });
+                    });
+
+
+                });
+
+    </script>
+</head>
+<body>
+<div style=" margin-left: 45%;margin-top: 3%;"><img src="../images/head.jpg"/></div>
+<div align="center">
+    <table border="0" align="center">
+        <tr>
+            <td>姓名:</td>
+            <td><input type="text" name="name" id="name"/></td>
+        </tr>
+        <tr>
+            <td>密码:</td>
+            <td><input type="password" name="pwd" id="pwd"/></td>
+        </tr>
+        <tr>
+            <td>身份证号:</td>
+            <td><input type="text" name="cerdNo" id="cerdNo"/></td>
+        </tr>
+        <tr>
+            <td>手机号:</td>
+            <td><input type="text" name="mobile" id="mobile"/></td>
+            <td>
+                <button type="button" id="getcodes">获取验证码</button>
+            </td>
+        </tr>
+        <tr>
+            <td>验证码:</td>
+            <td><input type="text" name="codes" id="codes"/></td>
+
+        </tr>
+        <tr>
+            <td>
+                用户类型：
+            </td>
+            <td>
+                <input type="radio" name="type" id="type" value="0" checked="true"/>用户<input type="radio" id="type"
+                                                                                             name="type" value="1"/>管理员
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <button type="button" id="register">注册</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+
